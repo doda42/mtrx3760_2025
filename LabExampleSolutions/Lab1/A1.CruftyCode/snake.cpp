@@ -14,6 +14,7 @@ public:
 
     Snake();
 
+    void draw();
     void moveRandom();
 };
 
@@ -24,6 +25,7 @@ int main() {
     Snake snake;
 
     while (true) {
+        snake.draw();
         snake.moveRandom();
 
         // Wrap around screen edges
@@ -45,7 +47,7 @@ Snake::Snake() {
     y = HEIGHT / 2;
 }
 
-void Snake::moveRandom() {
+void Snake::draw() {
     // Draw to the screen
     
     std::cout << "\033[2J\033[1;1H"; // clear
@@ -61,7 +63,9 @@ void Snake::moveRandom() {
     }
 
     std::cout << std::flush;
+}
 
+void Snake::moveRandom() {
     // Now apply random movement
     int dir = rand() % 4;
 
@@ -69,7 +73,4 @@ void Snake::moveRandom() {
     if (dir == 1) x--;       // left
     if (dir == 2) y++;       // down
     if (dir == 3) y--;       // up
-
 }
-
-
