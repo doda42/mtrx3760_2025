@@ -3,7 +3,8 @@
 class Ball
 {
     public:
-        void bounce() {   
+        void bounce() 
+        {   
             std::cout << "The ball bounces!" << std::endl; 
             ++bounceCount;
         }
@@ -13,12 +14,14 @@ class Ball
 class Basket
 {
     public:
-        void init() {
+        void init() 
+        {
             hasBall = false;
         }
         void placeBall()
         {
-            if (hasBall == false) {
+            if (hasBall == false) 
+            {
                 std::cout << "Placing the ball in the basket..." << std::endl;
                 ball.bounce();
                 hasBall = true;
