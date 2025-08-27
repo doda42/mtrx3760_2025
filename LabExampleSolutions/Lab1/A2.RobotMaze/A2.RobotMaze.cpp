@@ -26,24 +26,26 @@ struct Pose
 };
 
 //-----------------------------------------------------------------------------------
+// A robot that knows how to wall-follow to solve a simple maze
+// Interacts with the Maze class to sense andavoid going through walls
 class Robot 
 {
     public:
-        void init( Maze* maze );
+        void init( Maze* maze ); // init to starting pose, associate with maze
     
-        Pose getPose();
+        Pose getPose();          // returns the robot's pose
         
-        Pose findPoseFwd();
-        Pose findPoseRight();
+        Pose findPoseFwd();      // returns pose one in front of robot
+        Pose findPoseRight();    // returns pose one to right of robot
 
-        bool senseRightFree();
-        bool senseFwdFree();        
+        bool senseRightFree();   // detects if the spot to the right is free
+        bool senseFwdFree();     // detects if the spot directly ahead is free
                 
-        void moveFwd();
-        void turnRight();
-        void turnLeft();   
+        void moveFwd();          // moves the robot forward
+        void turnRight();        // turns the robot right
+        void turnLeft();         // turns the robot left
         
-        void takeOneAction();
+        void takeOneAction();    // uses sensors to decide on and take a single action from the list above
 
     private:
         Pose pose;
@@ -53,25 +55,28 @@ class Robot
 
 
 //-----------------------------------------------------------------------------------
+// Simple maze with a hard-coded layout
 class Maze 
 {
     public:
-        void init();
-        bool isFree( Pose pose );
-        bool isDone( Pose pose );
-        char getCellDrawing( int y, int x );
+        void init();                // initialise the maze, hard-coded
+        bool isFree( Pose pose );   // check if the location Pose is free
+        bool isDone( Pose pose );   // check if Pose is the finishing 'X'
+        char getCellDrawing( int y, int x );    // gets the symbol to draw for a particular cell location
 
     private:
         std::vector<std::string> layout;
 };
 
 //-----------------------------------------------------------------------------------
+// Renderer knows how to render a maze with a robot in it
 class Renderer 
 {
     public:
+        // Init the renderer, keeps associations with robot and maze
         void init( Maze* maze, Robot* robot );
-        void clear();
-        void draw();
+        void clear();   // clear the display
+        void draw();    // draw the display
         
     private:
         Maze* pMaze;
@@ -79,11 +84,12 @@ class Renderer
 };
 
 //-----------------------------------------------------------------------------------
+// The top-level simulation contains a robot, maze, and renderer
 class Simulation 
 {
     public:
-        void init();
-        void run();
+        void init();    // initialise the simulation
+        void run();     // run the simulation
     
     private:
         Robot robot;
@@ -240,19 +246,38 @@ void Robot::turnLeft()
 bool Robot::senseFwdFree()
 {
     bool result = true;
-    std::cout << "STUB implementation, always sensing forward as free" << std::endl;
+    Pose checkPose = findPoseFwd();
+    result = pMaze->isFree( checkPose );
     return result;
 }
+
 bool Robot::senseRightFree()
 {
     bool result = true;
-    std::cout << "STUB implementation, always sensing to the right as free" << std::endl;
+    Pose checkPose = findPoseRight();
+    result = pMaze->isFree( checkPose );
     return result;
 }
 
 void Robot::takeOneAction() 
 {
-    moveFwd();
-    std::cout << "STUB implementation, always moving forward" << std::endl;
+    if( !justTurned && senseRightFree() )
+    {
+        turnRight();
+        justTurned = true;
+        std::cout << "Turn right" << std::endl;
+    } 
+    else if( senseFwdFree() )
+    {
+        moveFwd();
+        justTurned = false;
+        std::cout << "Fwd" << std::endl;
+    } 
+    else 
+    {
+        turnLeft();
+        justTurned = true;
+        std::cout << "Turn left" << std::endl;
+    }                
 }
 
