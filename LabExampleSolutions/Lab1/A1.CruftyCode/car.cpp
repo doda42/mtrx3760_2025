@@ -1,17 +1,19 @@
 #include <iostream>
 
-using namespace std;
-
+// Wheels for a car, can rotate
 class Wheel {
     public:
-        void rotate();
+        void rotate();          // A wheel tracks its turns, this rotates 
     private:
-        int turns;
+        int turns;              // Tracking wheel turns
 };
 
+// Car knows how to drive, has four wheels
 class Car {
     public:
-        void drive();
+        void drive();           // drives the car, manipulates wheels
+        
+        // The four wheels of the car
         Wheel frontLeft;
         Wheel frontRight;
         Wheel backLeft;
@@ -28,7 +30,7 @@ int main() {
 
 
 void Car::drive() {
-    cout << "Car is driving..." << endl;
+    std::cout << "Car is driving..." << std::endl;
     frontLeft.rotate();
     frontRight.rotate();
     backLeft.rotate();
@@ -36,6 +38,6 @@ void Car::drive() {
 }
 
 void Wheel::rotate() {
-    cout << "Wheel is rotating" << endl;
+    std::cout << "Wheel is rotating" << std::endl;
     this->turns++;
 }
