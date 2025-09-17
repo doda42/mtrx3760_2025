@@ -14,7 +14,7 @@
 
 #include <stdlib.h>   // for rand()
 #include <iostream>
-
+#include <vector>
 
 //-----------------------------------------------------------------------------
 struct Vec2D
@@ -63,6 +63,7 @@ class CBall
         Vec2D mPosition;
         Vec2D mVelocity;
         float mRadius;
+        Color mColour;
         
         //---Consts---
         const float mDamping;   // energy loss on bounce
@@ -77,23 +78,35 @@ class CBall
 //-----------------------------------------------------------------------------
 int main()
 {
+    const int NumBalls = 1000;
     CRender Render;
-    CBall Ball( Render );
+    std::vector<CBall*> Balls;
+
+    for( int i=0; i<NumBalls; ++i )
+    {
+        Balls.push_back( new CBall( Render ) );
+    }
     
     //---The main loop---
     while( !Render.WindowShouldClose() ) 
     {
         Render.BeginDrawing();
-        
-        Ball.Update();
 
-        Ball.Draw();
-                        
+        for( int i=0; i<NumBalls; ++i )
+        {
+            Balls[i]->Update();
+            Balls[i]->Draw();
+        }                        
         Render.EndDrawing();
     }
     
     //---Cleanup---
     Render.CloseWindow();
+        
+    for( int i=0; i<NumBalls; ++i )
+    {
+        delete Balls[i];
+    }
     
     return 0;
 }
@@ -101,11 +114,22 @@ int main()
 
 //-----------------------------------------------------------------------------
 CBall::CBall( CRender& arRender )
-    :   mPosition( {400.0f + (100.0f * (rand()/RAND_MAX + 0.5f)), 300.0f} ),
-        mVelocity( {4.0f, 0.0f} ),
-        mRadius( 50.0f ),
-        mDamping( 0.98f ),
+    :   mPosition
+        ({
+            400.0f + (100.0f * (float(rand())/RAND_MAX - 0.5f)), 
+            300.0f + (100.0f * (float(rand())/RAND_MAX - 0.5f))
+        }),
+        mVelocity( {4.0f + 4.0f * (float(rand())/RAND_MAX - 0.5f), 0.0f} ),
+        mRadius( 50.0f + 40.0f * (float(rand())/RAND_MAX - 0.5f)),
+        mDamping( 0.97f ),
         mGravity( 0.5f ),
+        mColour
+        { 
+            (unsigned char)(rand()%255), 
+            (unsigned char)(rand()%255), 
+            (unsigned char)(rand()%255), 
+            128 
+        },
         mrRender( arRender )
 {
     
@@ -125,9 +149,9 @@ void CBall::Update()
         mPosition.y = mrRender.mScreenHeight - mRadius;  // reposition at floor
         
         // Reverse velocity and add a small random variation
-        float randomOffset = ((rand() % 21)) / 25.0f;
+        float randomVelocityOffset = 5.0f * (float(rand())/RAND_MAX - 0.5f);
         mVelocity.y *= -mDamping;
-        mVelocity.y -= randomOffset;
+        mVelocity.y += randomVelocityOffset;
     }
 
     // Bounce off ceiling
@@ -147,7 +171,7 @@ void CBall::Update()
 
 void CBall::Draw()
 {
-    mrRender.DrawCircle( mPosition, mRadius, RED );
+    mrRender.DrawCircle( mPosition, mRadius, mColour );
 }
 
 //-----------------------------------------------------------------------------
