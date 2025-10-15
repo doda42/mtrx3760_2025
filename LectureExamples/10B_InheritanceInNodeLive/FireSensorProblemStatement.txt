@@ -6,5 +6,5 @@ Both camera and photodiode sensors report a single integer that indicates the pr
 
 To help get you started while the team are developing the low-level hardware drivers they have provided you with a HardwareEmulator class that generates callbacks similar to how the real sensor will behave. See HardwareEmulator.h for details.
 
-
+Use ROS2.
 
